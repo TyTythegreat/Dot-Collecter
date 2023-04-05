@@ -1,0 +1,149 @@
+// Load previous score from local storage, or initialize to 0 if none exists
+var previousScore = localStorage.getItem("dotCount") || 0;
+var dotCount = parseInt(previousScore);
+
+
+//Create canvas
+const canvas = document.createElement('canvas');
+const context = canvas.getContext('2d');
+canvas.id = 'gameCanvas';
+document.body.appendChild(canvas);
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+
+// Set up game objects
+var player = {
+   x: 0,
+   y: 0,
+   width: 20,
+   height: 20,
+   speed: 5
+};
+
+
+var dots = [];
+
+
+for (var i = 0; i < 20; i++) {
+   dots.push({
+       x: Math.random() * canvas.width,
+       y: Math.random() * canvas.height,
+       size: 10,
+       collected: false
+   });
+}
+
+
+// Set up keyboard input
+var keysDown = {};
+
+
+addEventListener("keydown", function(event) {
+   keysDown[event.keyCode] = true;
+});
+
+
+addEventListener("keyup", function(event) {
+   delete keysDown[event.keyCode];
+});
+
+
+// Set up game loop
+function update() {
+   // Move player
+   if (38 in keysDown) { // Up arrow
+       player.y -= player.speed;
+   }
+   if (40 in keysDown) { // Down arrow
+       player.y += player.speed;
+   }
+   if (37 in keysDown) { // Left arrow
+       player.x -= player.speed;
+   }
+   if (39 in keysDown) { // Right arrow
+       player.x += player.speed;
+   }
+
+
+   // Check for collision with dots
+   for (var i = 0; i < dots.length; i++) {
+       var dot = dots[i];
+       if (!dot.collected && collides(player, dot)) {
+           dot.collected = true;
+           dotCount++; // Increment dot count
+
+
+           // Regenerate dot in a new random location
+           dot.x = Math.random() * canvas.width;
+           dot.y = Math.random() * canvas.height;
+           dot.collected = false;
+       }
+   }
+
+
+   // Save score to local storage
+   localStorage.setItem("dotCount", dotCount);
+}
+
+
+function render() {
+   // Clear canvas
+   context.clearRect(0, 0, canvas.width, canvas.height);
+
+
+   // Draw player
+   context.fillStyle = "red";
+   context.fillRect(player.x, player.y, player.width, player.height);
+
+
+   // Draw dots
+   context.fillStyle = "blue";
+   for (var i = 0; i < dots.length; i++) {
+       var dot = dots[i];
+       if (!dot.collected) {
+           context.beginPath();
+           context.arc(dot.x, dot.y, dot.size, 0, Math.PI * 2);
+           context.fill();
+       }
+   }
+
+
+   // Draw dot count
+   context.fillStyle = "black";
+   context.font = "16px Arial";
+   context.fillText("Dots collected: " + dotCount, 10, 20);
+}
+
+
+function gameLoop() {
+   update();
+   render();
+   requestAnimationFrame(gameLoop);
+}
+
+
+// Helper function for collision detection
+function collides(a, b) {
+   return a.x < b.x + b.size &&
+          a.x + a.width > b.x &&
+          a.y < b.y + b.size &&
+          a.y + a.height > b.y;
+}
+
+
+// Update score in case it was changed in another tab
+window.addEventListener("storage", function(event) {
+   if (event.key === "dotCount") {
+       dotCount = parseInt(event.newValue);
+   }
+});
+
+
+requestAnimationFrame(gameLoop);
+``
+
+
+
+
+
