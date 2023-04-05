@@ -6,4 +6,4 @@ it is currently pretty usless but here are its fetures:
 -Not discontinued
 
 NOTE: This is not an application, just code that you can put into a javascript code runner.
- I reccomend playcode because I used it and I know it works with this code
+ I have attached a website link which leads to a website with the code implamented
