@@ -46,6 +46,15 @@ for (var i = 0; i < 5; i++) {
    });
 }
 
+// Add green dot that gives 5 points when player collides with it
+dots.push({
+   x: Math.random() * canvas.width,
+   y: Math.random() * canvas.height,
+   size: 10,
+   collected: false,
+   color: "green" // color is green
+});
+
 // Set up keyboard input
 var keysDown = {};
 
@@ -80,25 +89,29 @@ function update() {
    // Check for collision with dots
    for (var i = 0; i < dots.length; i++) {
        var dot = dots[i];
-       if (!dot.collected && collides(player, dot)) {
-           dot.collected = true;
-           if (dot.color === "red") { // if red dot, decrement dot count
-               dotCount--;
-           } else { // otherwise, increment dot count
-               dotCount++;
-           }
+if (!dot.collected && collides(player, dot)) {
+   dot.collected = true;
+   if (dot.color === "red") { // if red dot, decrement dot count
+       dotCount--;
+   } else if (dot.color === "green") { // if green dot, increment dot count by 5
+       dotCount += 5;
+   } else { // otherwise, increment dot count
+       dotCount++;
+   }
 
-           // Regenerate dot in a new random location
-           dot.x = Math.random() * canvas.width;
-           dot.y = Math.random() * canvas.height;
-           dot.collected = false;
+   // Regenerate dot in a new random location
+   dot.x = Math.random() * canvas.width;
+   dot.y = Math.random() * canvas.height;
+   dot.collected = false;
+}
+
        }
    }
 
 
    // Save score to local storage
    localStorage.setItem("dotCount", dotCount);
-}
+
 
 
 function render() {
