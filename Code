@@ -40,7 +40,7 @@ for (var i = 0; i < 5; i++) {
    dots.push({
        x: Math.random() * canvas.width,
        y: Math.random() * canvas.height,
-       size: 15,
+       size: 10,
        collected: false,
        color: "red" // color is red
    });
