@@ -30,10 +30,21 @@ for (var i = 0; i < 20; i++) {
        x: Math.random() * canvas.width,
        y: Math.random() * canvas.height,
        size: 10,
-       collected: false
+       collected: false,
+       color: "blue" // default color is blue
    });
 }
 
+// Add red dots that remove 1 point when player collides with them
+for (var i = 0; i < 5; i++) {
+   dots.push({
+       x: Math.random() * canvas.width,
+       y: Math.random() * canvas.height,
+       size: 15,
+       collected: false,
+       color: "red" // color is red
+   });
+}
 
 // Set up keyboard input
 var keysDown = {};
@@ -71,8 +82,11 @@ function update() {
        var dot = dots[i];
        if (!dot.collected && collides(player, dot)) {
            dot.collected = true;
-           dotCount++; // Increment dot count
-
+           if (dot.color === "red") { // if red dot, decrement dot count
+               dotCount--;
+           } else { // otherwise, increment dot count
+               dotCount++;
+           }
 
            // Regenerate dot in a new random location
            dot.x = Math.random() * canvas.width;
@@ -98,21 +112,36 @@ function render() {
 
 
    // Draw dots
-   context.fillStyle = "blue";
    for (var i = 0; i < dots.length; i++) {
        var dot = dots[i];
        if (!dot.collected) {
+           context.fillStyle = dot.color;
            context.beginPath();
            context.arc(dot.x, dot.y, dot.size, 0, Math.PI * 2);
            context.fill();
        }
    }
 
-
    // Draw dot count
    context.fillStyle = "black";
    context.font = "16px Arial";
    context.fillText("Dots collected: " + dotCount, 10, 20);
+
+   // Add red dot
+   context.fillStyle = "red";
+   context.beginPath();
+   context.arc(canvas.width - 20, 20, 10, 0, 2 * Math.PI);
+   context.fill();
+
+   // Add event listener to red dot
+   canvas.addEventListener("click", function(event) {
+       var dotDistance = Math.sqrt(Math.pow(event.clientX - (canvas.width - 20), 2) + Math.pow(event.clientY - 20, 2));
+       if (dotDistance < 10) {
+           dotCount--;
+           context.clearRect(0, 0, canvas.width, canvas.height);
+           render();
+       }
+   });
 }
 
 
@@ -141,9 +170,3 @@ window.addEventListener("storage", function(event) {
 
 
 requestAnimationFrame(gameLoop);
-``
-
-
-
-
-
