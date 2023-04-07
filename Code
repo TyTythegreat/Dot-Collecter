@@ -92,7 +92,7 @@ function update() {
 if (!dot.collected && collides(player, dot)) {
    dot.collected = true;
    if (dot.color === "red") { // if red dot, decrement dot count
-       dotCount--;
+       dotCount-= 10;
    } else if (dot.color === "green") { // if green dot, increment dot count by 5
        dotCount += 5;
    } else { // otherwise, increment dot count
